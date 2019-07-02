@@ -1,0 +1,22 @@
+<div class="govuk-form-group {{#if this.invalid}}govuk-form-group--error{{/if}}">
+  <label class="govuk-label" for="{{ id }}-input">
+    {{ label }}
+  </label>
+  <span class="govuk-hint">{{ hint }}</span>
+  {{#if invalid }}
+  <span class="govuk-error-message"> <span class="govuk-visually-hidden">Error:</span> {{ error }} </span>
+  {{/if}}
+
+  <div class="govuk-radios">
+    {{#each options }}
+
+    <div class="govuk-radios__item">
+      <input class="govuk-radios__input" id="{{ ../id }}-input" name="{{ ../id }}" type="radio" value="{{ this }}" />
+      <label class="govuk-label govuk-radios__label" for="{{ ../id }}-input">
+        {{ this }}
+      </label>
+    </div>
+
+    {{/each}}
+  </div>
+</div>

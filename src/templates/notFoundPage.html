@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="/assets/css/all.css" />
+  </head>
+  <body class="govuk-template__body ">
+    <script>
+      document.body.className = document.body.className
+        ? document.body.className + " js-enabled"
+        : "js-enabled";
+    </script>
+
+    {{> govHeader }}
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="govuk-heading-l">404 - Not Found</h1>
+        </div>
+      </div>
+    </main>
+
+    {{> govFooter }}
+  </body>
+</html>

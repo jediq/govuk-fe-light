@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="/assets/css/all.css" />
+  </head>
+  <body class="govuk-template__body ">
+    <script>
+      document.body.className = document.body.className ? document.body.className + " js-enabled" : "js-enabled";
+    </script>
+
+    {{> govHeader }}
+
+    <main class="govuk-main-wrapper govuk-width-container" id="main-content" role="main">
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          {{#if page.invalid }}
+          <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+              There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+              <ul class="govuk-list govuk-error-summary__list">
+                {{#each page.items as | item |}}
+                {{#if this.invalid}}
+                <li>
+                  <a href="#{{ this.id }}-input">{{ this.error }}</a>
+                </li>
+                {{/if}}
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+          {{/if}}
+          <h1 class="govuk-heading-l">{{ page.description }}</h1>
+          <form method="POST">
+            <div class="govuk-form-group {{#if page.invalid}}govuk-form-group--error{{/if}}">
+              {{#each page.items}}
+              {{#if_eq this.type 'text'}}
+              {{> textField ..}}
+              {{/if_eq}}
+
+              {{#if_eq this.type 'radio'}}
+              {{> radioField ..}}
+              {{/if_eq}}
+
+              {{/each}}
+            </div>
+            <div class="govuk-form-group">
+              <input type="submit" value="Continue" id="continue" class="govuk-button" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    {{> govFooter }}
+  </body>
+</html>
