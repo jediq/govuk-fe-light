@@ -12,7 +12,7 @@ var CryptoJS = require("crypto-js");
         page: "vrn"
       },
       cookies: {
-        "-1751705032": "U2FsdGVkX1+Y8yFOzryWntoayji/Tgx6vykHqz8BkazBTYBjn7tYVqx8TBVcpeI/JE9LVH2fDVjlEZNIheTu5g=="
+        "1772971553": "U2FsdGVkX18wdiPfl7vgTHXYEL2IHM7MyJleriuQHFmG/oyFskXHHe1xuNN32N9x74eXB/NqFzZqZO1P5cTE4w=="
       }
     };
 
@@ -25,7 +25,6 @@ var CryptoJS = require("crypto-js");
     var message = JSON.stringify({ field1: "val1", field2: "val2" });
     var secret = "8y/B?D(G+KbPeShVmYq3t6w9z$C&F)H@";
     var ciphertext = CryptoJS.AES.encrypt(message, secret).toString();
-    console.log("ciphertext", ciphertext);
 
     // Decrypt
     var bytes = CryptoJS.AES.decrypt(ciphertext, secret);
@@ -33,4 +32,6 @@ var CryptoJS = require("crypto-js");
 
     expect(originalText).toBe(message);
   });
+
+  test("preRequisites", () => {});
 })();

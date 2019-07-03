@@ -1,8 +1,8 @@
 var cloneDeep = require("lodash.clonedeep");
 var logger = require("./util/Logger");
 var CryptoJS = require("crypto-js");
-
-const globalService = require("./configuration");
+var serviceConfig = process.env.npm_config_service || "./configuration";
+const globalService = require(serviceConfig);
 
 export class Context {
   service: any;
@@ -12,17 +12,17 @@ export class Context {
   constructor(req: any) {
     this.service = cloneDeep(globalService);
     this.service.hash = hashCode(this.service.name);
-    logger.info("service hash : " + this.service.hash);
+    logger.debug("service hash : " + this.service.hash);
 
     const pageId = req.params["page"] || this.service.firstPage;
     this.page = this.service.pages.find((page: any) => page.id === pageId);
 
     this.data = this.getDataFromReq(req);
-    logger.info("this.data after cookie : ", this.data);
+    logger.debug("this.data after cookie : " + JSON.stringify(this.data));
 
     req.body && Object.keys(req.body).forEach(key => (this.data[key] = req.body[key]));
 
-    logger.info("this.data after fields: ", this.data);
+    logger.debug("this.data after fields: " + JSON.stringify(this.data));
   }
 
   getEncodedData() {
@@ -42,16 +42,38 @@ export class Context {
   }
 
   encode(obj: any, secret: string) {
+    if (process.env.npm_config_debug == "true") {
+      return JSON.stringify(obj);
+    }
     logger.debug(`encoding : ${obj} with ${secret}`);
     return CryptoJS.AES.encrypt(JSON.stringify(obj), secret).toString();
   }
 
   decode(str: string, secret: string) {
+    if (process.env.npm_config_debug == "true") {
+      return JSON.parse(str);
+    }
     var bytes = CryptoJS.AES.decrypt(str, secret);
     logger.debug("decoded into bytes: " + bytes);
     var asString = bytes.toString(CryptoJS.enc.Utf8);
     logger.debug("decoded to string: " + asString);
     return JSON.parse(asString);
+  }
+
+  isValid() {
+    if (!this.page) {
+      logger.info("context invalid : no page found");
+      return false;
+    }
+
+    if (!this.page.preRequisiteData) {
+      return true;
+    }
+    logger.info(`page ${this.page.id} has pre-requisite data`);
+    return this.page.preRequisiteData.every(key => {
+      console.log(`key ${key} in data? ` + JSON.stringify(this.data));
+      return key in this.data;
+    });
   }
 }
 

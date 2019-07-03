@@ -24,23 +24,35 @@ app.get("/", (req: express.Request, res: express.Response) => {
 
 app.get("/:page", (req: express.Request, res: express.Response) => {
   const context = new Context(req);
+  if (!context.isValid()) {
+    res.redirect(context.service.firstPage);
+    return;
+  }
   const document = renderer.renderDocument(context);
   res.cookie(context.service.hash, context.getEncodedData());
+  logger.debug("written cookie : " + context.getEncodedData());
+
   res.send(document);
 });
 
 app.post("/:page", (req: express.Request, res: express.Response) => {
-  logger.info(`Posted to page ${req.params["page"]} : `, req.body);
+  logger.info(`Posted to page ${req.params["page"]} : ` + JSON.stringify(req.body));
 
   var context = new Context(req);
+  if (!context.isValid()) {
+    res.redirect(context.service.firstPage);
+    return;
+  }
 
   validator.executePreValidation(context);
   validator.enrichPage(context.page, context);
   validator.executePostValidation(context);
 
+  res.cookie(context.service.hash, context.getEncodedData());
+  logger.debug("written cookie : " + context.getEncodedData());
+
   if (!context.page.valid) {
     const document = renderer.renderDocument(context);
-    res.cookie(context.service.hash, context.getEncodedData());
     res.send(document);
   } else {
     res.redirect(context.page.nextPage(context));

@@ -60,8 +60,8 @@ import { functionify, objectify } from "../../../src/util/PrimitiveHelper";
   test("functionify with service data", () => {
     let service = require("../../../src/configuration");
     functionify(service);
-    var vrnPage = service.pages().find((page: any) => page().id() === "vrn");
-    expect(vrnPage().id()).toBe("vrn");
+    var page1 = service.pages().find((page: any) => page().id() === "page1");
+    expect(page1().id()).toBe("page1");
   });
 
   test("objectify with fake data", () => {
@@ -127,8 +127,8 @@ import { functionify, objectify } from "../../../src/util/PrimitiveHelper";
       }
     };
     objectify(service, context);
-    var vrnPage = service.pages.find((page: any) => page.id === "vrn");
-    expect(vrnPage.id).toBe("vrn");
+    var page1 = service.pages.find((page: any) => page.id === "page1");
+    expect(page1.id).toBe("page1");
   });
 
   test("objectify with simple array as array", () => {
