@@ -27,12 +27,19 @@ module.exports = {
       preValidation: [
         {
           id: "vehicleData",
-          url: "http://localhost:3000/assets/{{context.data.vrnField}}",
+          url:
+            "https://uk1.ukvehicledata.co.uk/api/datapackage/MotHistoryAndTaxStatusData?v=2&api_nullitems=1&auth_apikey=21f37715-3198-474c-9fb2-ed1cdfc47604&key_VRM={{context.data.vrnField}}",
           headers: {
             accept: "application/json"
           }
         }
-      ]
+      ],
+      validation: {
+        validator: context => {
+          return context.data.vehicleData && context.data.vehicleData.Response.DataItems.VehicleDetails;
+        },
+        error: "We don't hold information about this vehicle"
+      }
     },
     {
       id: "channel-selection",
@@ -59,7 +66,7 @@ module.exports = {
       id: "email",
       description: "What is your email address?",
       preRequisiteData: ["vrnField", "channelField"],
-      nextPage: () => "vrn",
+      nextPage: () => "confirmation",
       items: [
         {
           id: "contactField",
@@ -76,7 +83,7 @@ module.exports = {
       id: "phone-number",
       description: "What is your mobile number?",
       preRequisiteData: ["vrnField", "channelField"],
-      nextPage: () => "vrn",
+      nextPage: () => "confirmation",
       items: [
         {
           id: "contactField",
@@ -89,5 +96,15 @@ module.exports = {
         }
       ]
     }
-  ]
+  ],
+  confirmation: {
+    description: "Check your details before you submit",
+    preRequisiteData: ["vrnField", "channelField", "contactField"],
+    groups: [
+      {
+        title: "Personal details",
+        items: ["vrnField"]
+      }
+    ]
+  }
 };

@@ -30,6 +30,11 @@
                 </li>
                 {{/if}}
                 {{/each}}
+                {{#if page.error }}
+                <li>
+                  <a href="#">{{ page.error }}</a>
+                </li>
+                {{/if}}
               </ul>
             </div>
           </div>

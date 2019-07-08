@@ -21,6 +21,7 @@ handlebars.registerHelper("if_eq", function(a, b, opts) {
 });
 
 const formPageTemplate = compile("formPage");
+const confirmationTemplate = compile("confirmation");
 const notFoundPageTemplate = compile("notFoundPage");
 
 function registerPartial(name: string) {
@@ -37,4 +38,8 @@ function renderDocument(context: any) {
     return notFoundPageTemplate(context);
   }
 }
-export { renderDocument };
+
+function renderConfirmation(context: any) {
+  return confirmationTemplate(context);
+}
+export { renderDocument, renderConfirmation };

@@ -22,7 +22,22 @@ app.get("/", (req: express.Request, res: express.Response) => {
   res.redirect(context.service.firstPage);
 });
 
+app.get("/confirmation", (req: express.Request, res: express.Response) => {
+  logger.info("rendering confirmation page");
+  const context = new Context(req);
+  context.page = context.service.confirmation;
+  if (!context.isValid()) {
+    res.redirect(context.service.firstPage);
+    return;
+  }
+
+  const document = renderer.renderConfirmation(context);
+  res.cookie(context.service.hash, context.getEncodedData());
+  res.send(document);
+});
+
 app.get("/:page", (req: express.Request, res: express.Response) => {
+  logger.info(`Get request to page ${req.params["page"]}`);
   const context = new Context(req);
   if (!context.isValid()) {
     res.redirect(context.service.firstPage);
@@ -30,12 +45,10 @@ app.get("/:page", (req: express.Request, res: express.Response) => {
   }
   const document = renderer.renderDocument(context);
   res.cookie(context.service.hash, context.getEncodedData());
-  logger.debug("written cookie : " + context.getEncodedData());
-
   res.send(document);
 });
 
-app.post("/:page", (req: express.Request, res: express.Response) => {
+app.post("/:page", async (req: express.Request, res: express.Response) => {
   logger.info(`Posted to page ${req.params["page"]} : ` + JSON.stringify(req.body));
 
   var context = new Context(req);
@@ -44,12 +57,11 @@ app.post("/:page", (req: express.Request, res: express.Response) => {
     return;
   }
 
-  validator.executePreValidation(context);
+  await validator.executePreValidation(context);
   validator.enrichPage(context.page, context);
   validator.executePostValidation(context);
 
   res.cookie(context.service.hash, context.getEncodedData());
-  logger.debug("written cookie : " + context.getEncodedData());
 
   if (!context.page.valid) {
     const document = renderer.renderDocument(context);

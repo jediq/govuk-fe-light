@@ -13,12 +13,11 @@ export class Context {
     this.service = cloneDeep(globalService);
     this.service.hash = hashCode(this.service.name);
     logger.debug("service hash : " + this.service.hash);
+    this.data = this.getDataFromReq(req);
+    logger.debug("this.data after cookie : " + JSON.stringify(this.data));
 
     const pageId = req.params["page"] || this.service.firstPage;
     this.page = this.service.pages.find((page: any) => page.id === pageId);
-
-    this.data = this.getDataFromReq(req);
-    logger.debug("this.data after cookie : " + JSON.stringify(this.data));
 
     req.body && Object.keys(req.body).forEach(key => (this.data[key] = req.body[key]));
 
