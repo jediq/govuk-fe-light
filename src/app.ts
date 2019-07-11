@@ -32,7 +32,7 @@ app.get("/confirmation", (req: express.Request, res: express.Response) => {
   }
 
   const document = renderer.renderConfirmation(context);
-  res.cookie(context.service.hash, context.getEncodedData());
+  createDataCookie(context, res);
   res.send(document);
 });
 
@@ -44,31 +44,41 @@ app.get("/:page", (req: express.Request, res: express.Response) => {
     return;
   }
   const document = renderer.renderDocument(context);
-  res.cookie(context.service.hash, context.getEncodedData());
+  createDataCookie(context, res);
   res.send(document);
 });
 
 app.post("/:page", async (req: express.Request, res: express.Response) => {
   logger.info(`Posted to page ${req.params["page"]} : ` + JSON.stringify(req.body));
-
   var context = new Context(req);
   if (!context.isValid()) {
     res.redirect(context.service.firstPage);
     return;
   }
 
-  await validator.executePreValidation(context);
-  validator.enrichPage(context.page, context);
-  validator.executePostValidation(context);
+  try {
+    await validator.executePreValidation(context);
+    validator.enrichPage(context.page, context);
+    validator.executePostValidation(context);
+  } catch (error) {
+    context.page.valid = false;
+    context.page.invalid = true;
+  }
 
-  res.cookie(context.service.hash, context.getEncodedData());
+  createDataCookie(context, res);
 
   if (!context.page.valid) {
-    const document = renderer.renderDocument(context);
-    res.send(document);
+    res.send(renderer.renderDocument(context));
   } else {
     res.redirect(context.page.nextPage(context));
   }
 });
+
+function createDataCookie(context: Context, res: express.Response) {
+  var data = context.getEncodedData();
+  logger.info("created cookie : " + data.length + " bytes");
+  logger.debug("cookie data : " + data);
+  res.cookie(context.service.hash, data);
+}
 
 module.exports = app;

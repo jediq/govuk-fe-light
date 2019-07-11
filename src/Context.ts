@@ -44,7 +44,7 @@ export class Context {
     if (process.env.npm_config_debug == "true") {
       return JSON.stringify(obj);
     }
-    logger.debug(`encoding : ${obj} with ${secret}`);
+    logger.debug(`encoding : ${JSON.stringify(obj)} with ${secret}`);
     return CryptoJS.AES.encrypt(JSON.stringify(obj), secret).toString();
   }
 
@@ -53,7 +53,6 @@ export class Context {
       return JSON.parse(str);
     }
     var bytes = CryptoJS.AES.decrypt(str, secret);
-    logger.debug("decoded into bytes: " + bytes);
     var asString = bytes.toString(CryptoJS.enc.Utf8);
     logger.debug("decoded to string: " + asString);
     return JSON.parse(asString);
@@ -70,7 +69,7 @@ export class Context {
     }
     logger.info(`page ${this.page.id} has pre-requisite data`);
     return this.page.preRequisiteData.every(key => {
-      console.log(`key ${key} in data? ` + JSON.stringify(this.data));
+      logger.info(`key ${key} in data? ` + JSON.stringify(this.data));
       return key in this.data;
     });
   }

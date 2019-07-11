@@ -1,4 +1,4 @@
-import * as validator from "./validator";
+import { Context } from "./Context";
 const logger = require("./util/Logger");
 
 import * as handlebars from "handlebars";
@@ -40,6 +40,34 @@ function renderDocument(context: any) {
 }
 
 function renderConfirmation(context: any) {
+  console.log("items : ", JSON.stringify(context.page));
+  for (var group of context.page.groups) {
+    var items = group.items;
+    for (var i = 0; i < items.length; i++) {
+      var id = items[i];
+      var { page, item }: any = findItem(id, context);
+      if (item) {
+        items[i] = {
+          id: id,
+          type: item.type,
+          label: item.label,
+          value: context.data[id],
+          page: page.id
+        };
+      }
+    }
+  }
+
   return confirmationTemplate(context);
+}
+
+function findItem(id, context: Context) {
+  for (var page of context.service.pages) {
+    for (var item of page.items) {
+      if (item.id == id) {
+        return { page, item };
+      }
+    }
+  }
 }
 export { renderDocument, renderConfirmation };

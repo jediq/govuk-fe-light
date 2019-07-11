@@ -16,7 +16,40 @@
     <main class="govuk-main-wrapper govuk-width-container" id="main-content" role="main">
       <div class="grid-row">
         <div class="column-two-thirds">
-          <h1 class="govuk-heading-l">{{ confirmation.description }}</h1>
+          <h1 class="govuk-heading-l">Check your details before you submit</h1>
+          <p class="govuk-body">{{ page.description }}</p>
+
+          {{#each page.groups}}
+
+          <h2 class="govuk-heading-m">{{ title }}</h2>
+
+          {{#each items}}
+
+          <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            <div class="govuk-summary-list__row">
+              <dt class="govuk-summary-list__key">
+                {{ label }}
+              </dt>
+              <dd class="govuk-summary-list__value">
+                {{ value }}
+              </dd>
+              <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href="/{{ page }}"> Change<span class="govuk-visually-hidden"> name</span> </a>
+              </dd>
+            </div>
+          </dl>
+
+          {{/each}}
+
+          {{#if_eq this.type 'text'}}
+          {{> textField ..}}
+          {{/if_eq}}
+
+          {{#if_eq this.type 'radio'}}
+          {{> radioField ..}}
+          {{/if_eq}}
+
+          {{/each}}
         </div>
       </div>
     </main>

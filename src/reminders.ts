@@ -29,6 +29,8 @@ module.exports = {
           id: "vehicleData",
           url:
             "https://uk1.ukvehicledata.co.uk/api/datapackage/MotHistoryAndTaxStatusData?v=2&api_nullitems=1&auth_apikey=21f37715-3198-474c-9fb2-ed1cdfc47604&key_VRM={{context.data.vrnField}}",
+
+          debugUrl: "http://localhost:3000/assets/YY09DEF.json",
           headers: {
             accept: "application/json"
           }
@@ -36,7 +38,7 @@ module.exports = {
       ],
       validation: {
         validator: context => {
-          return context.data.vehicleData && context.data.vehicleData.Response.DataItems.VehicleDetails;
+          return context.data.vehicleData && context.data.vehicleData[0].registration;
         },
         error: "We don't hold information about this vehicle"
       }
@@ -98,12 +100,18 @@ module.exports = {
     }
   ],
   confirmation: {
-    description: "Check your details before you submit",
+    description: "Make sure the vehicle and your contact details are correct.",
     preRequisiteData: ["vrnField", "channelField", "contactField"],
     groups: [
       {
         title: "Personal details",
-        items: ["vrnField"]
+        items: ["vrnField"],
+        ancillary: [
+          {
+            name: "Make",
+            location: "data.vehicleData[0].make"
+          }
+        ]
       }
     ]
   }

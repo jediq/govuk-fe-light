@@ -37,9 +37,9 @@ async function executePreValidation(context: any) {
   if (context.page.preValidation) {
     for (var pre of context.page.preValidation) {
       try {
-        var urlTemplate = handlebars.compile(pre.url);
+        var urlTemplate = handlebars.compile(process.env.npm_config_debug !== "true" ? pre.url : pre.debugUrl);
         var url = urlTemplate({ context });
-        logger.debug("calling preValidation url : " + url);
+        logger.info("calling preValidation url : " + url);
         //var response = await superagent.get(url);
         const response = await got(url);
 
