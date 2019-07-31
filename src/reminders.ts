@@ -68,7 +68,7 @@ module.exports = {
       id: "email",
       description: "What is your email address?",
       preRequisiteData: ["vrnField", "channelField"],
-      nextPage: () => "confirmation",
+      nextPage: () => "tax-reminder",
       items: [
         {
           id: "contactField",
@@ -85,7 +85,7 @@ module.exports = {
       id: "phone-number",
       description: "What is your mobile number?",
       preRequisiteData: ["vrnField", "channelField"],
-      nextPage: () => "confirmation",
+      nextPage: () => "tax-reminder",
       items: [
         {
           id: "contactField",
@@ -97,6 +97,22 @@ module.exports = {
           error: "Enter your mobile number"
         }
       ]
+    },
+    {
+      id: "tax-reminder",
+      description: "Do you also want a reminder about the vehicle tax?",
+      preRequisiteData: ["vrnField"],
+      nextPage: () => "confirmation",
+      items: [
+        {
+          id: "taxField",
+          label: "Tax reminder?",
+          type: "radio",
+          options: ["Yes", "No"],
+          validator: ".+",
+          error: "Choose if you'd like a tax reminder"
+        }
+      ]
     }
   ],
   confirmation: {
@@ -105,6 +121,11 @@ module.exports = {
     groups: [
       {
         title: "Personal details",
+        items: ["contactField", "taxField"],
+        ancillary: []
+      },
+      {
+        title: "Vehicle details",
         items: ["vrnField"],
         ancillary: [
           {
